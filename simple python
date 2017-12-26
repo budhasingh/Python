@@ -1,0 +1,23 @@
+#--------- Fetch data from oracle table ---------------------
+import os
+os.chdir("C:\oracle\instantclient-basic-windows.x64-11.2.0.4.0\instantclient_11_2")
+import cx_Oracle
+import time
+import pandas as pd
+
+start_time = time.time()
+con = "bawprd/bawprd@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=123.342.11.3)(PORT=8765))(CONNECT_DATA=(SERVICE_NAME=raj)))"
+database = cx_Oracle.connect(con)
+# Get the cursor, which is used to traverse the database, line by line
+cursor = database.cursor()
+cursor.execute('select * from emp');
+rows = cursor.fetchall()
+# ---- print using data frame 
+df = pd.DataFrame( [[ij for ij in i] for i in rows] )
+df.rename(columns={0: 'EMPNO', 1: 'Continent', 2: 'ENAME', 3: 'JOB', 4:'MGR', 4:'HIREDATE', 4:'SAL', 4:'COMM', 4:'DEPTNO'}, inplace=True);
+df = df.sort_values(['EMPNO'], ascending=[1]);
+print(df)
+# Close the cursor
+cursor.close()
+# Close the database connection
+database.close()
